@@ -6,7 +6,7 @@ import urequests
 import ujson
 import getDS3231
 
-SLEEP_DURATION = 60 * 1000  # Sleep for 60 seconds
+SLEEP_DURATION = 10 * 1000  # Sleep for 60 seconds
 rtc = RTC()
 server_url = "http://Insp16.local:3000/time"
 data_file = "unsent_data.json"  # File to store unsent data when Wi-Fi or server is unavailable
@@ -76,8 +76,8 @@ def send_data_to_server(data):
 def append_unsent_data(data):
     try:
         with open(data_file, "a") as f:
-            json_data = ujson.dumps(data)
-            f.write(json_data + "\n")  # Append each entry on a new line
+            data = ujson.dumps(data)
+            f.write(data + "\n")  # Append each entry on a new line
         print("Data appended to local storage.")
     except Exception as e:
         print("Failed to append data:", e)
