@@ -1,13 +1,22 @@
 import network
 import time
-from machine import Pin, deepsleep, RTC
+from utime import sleep_ms
+from machine import Pin, deepsleep
 import dht
 import urequests
 import ujson
 import getDS3231
+import sys
+import machine
+
+# Define reset cause constants
+RESET_POWER_ON = machine.PWRON_RESET
+RESET_HARDWARE_WATCHDOG = machine.HARD_RESET
+RESET_SOFT_RESET = machine.SOFT_RESET
+RESET_DEEP_SLEEP = machine.DEEPSLEEP_RESET
 
 SLEEP_DURATION = 10 * 1000  # Sleep for 60 seconds
-rtc = RTC()
+
 server_url = "http://Insp16.local:3000/time"
 data_file = "unsent_data.json"  # File to store unsent data when Wi-Fi or server is unavailable
 
@@ -104,6 +113,7 @@ def send_stored_data():
 
 # Main function to collect and send data
 def main():
+
     # Get the current time from the RTC
     year, month, day, hour, minute, second = get_rtc_data()
 
@@ -144,6 +154,8 @@ def main():
         append_unsent_data(data)
 
     # Disconnect Wi-Fi and go to sleep
+
+    print("Disconnecting network")
     wlan.disconnect()
     wlan.active(False)
 
@@ -151,5 +163,64 @@ def main():
     print(f"Entering deep sleep for {SLEEP_DURATION / 1000} seconds...")
     deepsleep(SLEEP_DURATION)
 
-# Start the main loop
-main()
+
+# Functions to handle reset causes
+
+def handle_power_on_reset():
+    print("Power-on reset")
+    print("Power on reset callin main")
+
+    main()    
+
+
+def handle_hardware_watchdog_reset():
+    print("Hardware watchdog reset")
+
+def handle_soft_reset():
+    print("Soft reset")
+
+
+    print('Enter REPL')
+    sys.exit()
+
+def handle_brown_out_reset():
+    print("Brown-out reset")
+    
+def handle_deep_sleep_reset():
+    print("Deep sleep reset calling main")
+    main()
+
+
+
+# Create a dictionary to map reset causes to corresponding handler functions
+reset_handlers = {
+    RESET_POWER_ON: handle_power_on_reset,
+    RESET_HARDWARE_WATCHDOG: handle_hardware_watchdog_reset,
+    RESET_SOFT_RESET: handle_soft_reset,
+    # RESET_BROWN_OUT: handle_brown_out_reset,
+    RESET_DEEP_SLEEP: handle_deep_sleep_reset
+}
+
+
+# import machine
+# Get the reset cause
+reset_cause = machine.reset_cause()
+
+# Clear the reset cause
+machine.wake_reason()
+
+# Call the handler function for the reset cause (if defined)
+reset_handlers.get(reset_cause, lambda: print("Unknown reset cause"))()
+
+#currently should never reach here
+#sampling delay moved to datalog2 deep sleep time
+
+# Should never reach here
+
+# Clear the reset cause
+# machine.wake_reason()
+
+# print('sleeping')
+
+# sleep_ms(10000)
+
