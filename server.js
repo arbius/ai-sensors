@@ -11,10 +11,11 @@ app.use(bodyParser.json());
 // Route to handle POST requests to /time with JSON data
 app.post('/time', (req, res) => {
     const jsonData = req.body;
-
+    // console.log('jsonData', jsonData)
+    
     // Convert the incoming JSON data to a string and add a newline for separation
-    const dataToAppend = JSON.stringify(jsonData, null, 2) + ',\n';
-
+    const dataToAppend = JSON.stringify(jsonData) + '\n';
+    // console.log('dataToAppend', dataToAppend)
     // Append the data to the file
     fs.appendFile('time.json', dataToAppend, (err) => {
         if (err) {
