@@ -81,6 +81,9 @@ def get_dht22_data():
     try:
         dht22_sensor.measure()
         temperature = dht22_sensor.temperature()
+        # convert celcius to farenheit
+        temperature   = (temperature * 9 / 5) + 32
+
         humidity = dht22_sensor.humidity()
         return temperature, humidity
     except Exception as e:
