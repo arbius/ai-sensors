@@ -39,7 +39,7 @@ fs.readFile('time.json', 'utf8', (err, data) => {
         rl.on('close', () => {
             if (dthArray.length > 0) {
                 // Define the desired key order
-                const keyOrder = ['day', 'month', 'year', 'hour', 'minute', 'second', 'temperature', 'humidity']; // Specify the order you want (e.g., age first, then name)
+                const keyOrder = ['day', 'month', 'year', 'hour', 'minute', 'second', 'temperature', 'humidity', 'iso_timestamp']; // Specify the order you want (e.g., age first, then name)
 
                 // Create the CSV file 'dth.csv'
                 const csvFile = fs.createWriteStream('dth.csv');

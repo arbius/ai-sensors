@@ -8,6 +8,17 @@ import ujson
 import getDS3231
 import sys
 import machine
+import blink
+
+ON_BOARD_PIN = 25
+led_pin = Pin(ON_BOARD_PIN, Pin.OUT)
+
+"""
+INVALID_DATE = 4
+NTP_TIMEOUT = 2
+NO_NETWORK = 3
+"""
+
 
 # Define reset cause constants
 RESET_POWER_ON = machine.PWRON_RESET
@@ -15,7 +26,7 @@ RESET_HARDWARE_WATCHDOG = machine.HARD_RESET
 RESET_SOFT_RESET = machine.SOFT_RESET
 RESET_DEEP_SLEEP = machine.DEEPSLEEP_RESET
 
-SLEEP_DURATION = 10 * 1000  # Sleep for 60 seconds
+SLEEP_DURATION = 60 * 1000 * 15 # Sleep for 15 minutes
 
 server_url = "http://Insp16.local:3000/time"
 data_file = "unsent_data.json"  # File to store unsent data when Wi-Fi or server is unavailable
@@ -183,9 +194,11 @@ def handle_power_on_reset():
 
 def handle_hardware_watchdog_reset():
     print("Hardware watchdog reset")
+    blink.blink_error(5)
 
 def handle_soft_reset():
     print("Soft reset")
+    blink.blink_error(1)
 
 
     print('Enter REPL')

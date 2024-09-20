@@ -2,12 +2,6 @@
 
 print ('entering shell3')
 
-# import connect
-# connect.do_connect()
-# import setDS3231
-# import getDS3231
-
-# import dthmain
 import os
 import cat
 
@@ -15,7 +9,7 @@ import cat
 os.listdir()
 # cat.cat('unsent_data.json')
 import ai3
-import getjson
+# import getjson
 
 
 

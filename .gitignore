@@ -1,0 +1,47 @@
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+virtualenv/
+esp32venv/
+typings/
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+.vs/
+
+# Dependency Management
+# You may choose to include this if you want to track requirements.txt
+# dependencies/
+# requirements.txt
+
+# Logs and Temporary Files
+*.log
+*.tmp
+
+# User-specific and Environment-specific Files
+.env
+.vscode/settings.json
+.envrc
+
+# Generated Files
+# Include patterns for generated files or directories
+# For example:
+# dist/
+# build/
+
+# Database Files
+# Include if your project uses a local database
+# database.sqlite
+
+# Operating System and Editor Files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor Workspace Configuration
+# .code-workspace
