@@ -42,6 +42,8 @@ dht22_sensor = dht.DHT22(Pin(15))
 def get_rtc_data():
     try:
         dt = getDS3231.do_getDS3231()
+
+
         if len(dt) >= 7:  # Ensure the data has the expected number of elements
             year = dt[0]    # Year
             month = dt[1]   # Month
@@ -50,8 +52,12 @@ def get_rtc_data():
             minute = dt[4]  # Minute
             second = dt[5]  # Second
 
+
+
             print(f"RTC Data: Year: {year}, Month: {month}, Day: {day}, Hour: {hour}, Minute: {minute}, Second: {second}")
             return year, month, day, hour, minute, second
+        
+
         else:
             print("Unexpected RTC data format:", dt)
             return (0, 0, 0, 0, 0, 0)  # Return default values in case of error
@@ -73,6 +79,8 @@ def get_dht22_data():
 # Send data to the Node.js server
 def send_data_to_server(data):
     try:
+        # data = ujson.dumps(data)
+
         response = urequests.post(server_url, json=data)
         print("Server response:", response.text)
         response.close()
@@ -99,6 +107,8 @@ def send_stored_data():
         
         for line in lines:
             data = ujson.loads(line.strip())
+            print ("send_stored_data", data)
+
             if send_data_to_server(data):
                 print("Stored data sent successfully!")
             else:
@@ -107,7 +117,9 @@ def send_stored_data():
 
         # Clear the file if all data was sent successfully
         with open(data_file, "w") as f:
+            print("Clearing unsent_data.json")
             f.write("")  # Overwrite the file with an empty string
+
     except Exception as e:
         print("Failed to read or send stored data:", e)
 
@@ -116,21 +128,17 @@ def main():
 
     # Get the current time from the RTC
     year, month, day, hour, minute, second = get_rtc_data()
+    dt = get_rtc_data()
+
+    iso_timestamp = "{}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}Z".format(dt[0], dt[1], dt[2], dt[3], dt[4], dt[5])
+    
 
     # Get temperature and humidity from DHT22
     temperature, humidity = get_dht22_data()
 
     # Prepare data in JSON format
-    data = {
-        "year": year,
-        "month": month,
-        "day": day,
-        "hour": hour,
-        "minute": minute,
-        "second": second,
-        "temperature": temperature,
-        "humidity": humidity
-    }
+    data = {"year": year, "month": month, "day": day, "hour": hour, "minute": minute, "second": second, "temperature": temperature, "humidity": humidity, "iso_timestamp": iso_timestamp}
+
 
     print("Data to be sent:", ujson.dumps(data))
 
