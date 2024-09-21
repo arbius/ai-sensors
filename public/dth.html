@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            margin: 20px;
+        }
+        pre {
+            background-color: #2e2e2e;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .json-formatter-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Local Temperature and Humidity</h1>
+    <pre id="json-data"></pre>
+    <div class="json-formatter-container"></div>
+    
+
+        <script>
+            // Fetch JSON data from the server
+            fetch('/last-entry')
+                .then(response => response.json())
+                .then(data => {
+                    // Display the JSON data
+                    document.getElementById('json-data').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => console.error('Error fetching JSON data:', error));
+        </script>
+
+            <!-- fetch('/api/data') -->
+
+</body>
+</html>
