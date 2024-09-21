@@ -30,10 +30,14 @@ app.post('/time', (req, res) => {
             return res.status(500).send('Error appending to file');
         }
 
-        console.log('Data received and appended to file successfully');
-        res.send('Data appended successfully!');
+        console.log(`Data received and appended to file successfully, ISO Timestamp: ${jsonData.iso_timestamp}`);
+        // console.log(`Last entry ISO Timestamp: ${jsonData.iso_timestamp}`);
+
+        // res.send('Data appended successfully!');
+        res.send(`Data appended successfully!, Timestamp: ${jsonData.iso_timestamp}`)
+      });
+      
     });
-});
 
 // Endpoint to get the last entry in a JSON file
 app.get('/last-entry', (req, res) => {
