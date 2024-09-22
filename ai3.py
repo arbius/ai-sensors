@@ -9,6 +9,7 @@ import getDS3231
 import sys
 import machine
 import blink
+import os
 
 ON_BOARD_PIN = 25
 led_pin = Pin(ON_BOARD_PIN, Pin.OUT)
@@ -136,6 +137,23 @@ def send_stored_data():
     except Exception as e:
         print("Failed to read or send stored data:", e)
         return False
+    
+def check_if_unsent_data_file_is_empty(data_file):
+    try:
+        # Check if the file exists
+        if data_file in os.listdir():
+            # Get the file size
+            file_size = os.stat(data_file)[6]
+            
+            # Return True if the file is empty, False otherwise
+            return file_size == 0
+        else:
+            print('File does not exist.')
+            return True  # Consider a non-existent file as empty
+    except OSError as e:
+        print('Error checking file:', e)
+        return True  # If there's an error, treat it as empty
+
 
 # Main function to collect and send data
 def main():
@@ -164,11 +182,15 @@ def main():
     # If Wi-Fi is connected, attempt to send both current and stored data
     if wlan.isconnected():
 
-        if send_stored_data():  # Try to send any unsent data from previous attempts
-            # Clear the file if all data was sent successfully
-            with open(data_file, "w") as f:
-                print("Clearing unsent_data.json")
-                f.write("")  # Overwrite the file with an empty string
+        # Call the function to check if the file is empty
+        if check_if_unsent_data_file_is_empty(data_file):
+            print ('unsent_data file is empty')
+        else:
+            if send_stored_data():  # Try to send any unsent data from previous attempts
+                # Clear the file if all data was sent successfully
+                with open(data_file, "w") as f:
+                    print("Clearing unsent_data.json")
+                    f.write("")  # Overwrite the file with an empty string
 
 
         # Try sending the current data
@@ -195,8 +217,7 @@ def main():
 # Functions to handle reset causes
 
 def handle_power_on_reset():
-    print("Power-on reset")
-    print("Power on reset callin main")
+    print("Power on reset calling main")
 
     blink.blink_error(5)
 
