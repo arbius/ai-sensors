@@ -25,6 +25,7 @@ RESET_POWER_ON = machine.PWRON_RESET
 RESET_HARDWARE_WATCHDOG = machine.HARD_RESET
 RESET_SOFT_RESET = machine.SOFT_RESET
 RESET_DEEP_SLEEP = machine.DEEPSLEEP_RESET
+RESET_HARD_RESET = machine.HARD_RESET
 
 SLEEP_DURATION = 60 * 1000 * 15 # Sleep for 15 minutes
 
@@ -94,6 +95,7 @@ def get_dht22_data():
 def send_data_to_server(data):
     try:
         # data = ujson.dumps(data)
+        blink.blink_error(2)
 
         response = urequests.post(server_url, json=data)
         print("Server response:", response.text)
@@ -125,17 +127,15 @@ def send_stored_data():
 
             if send_data_to_server(data):
                 print("Stored data sent successfully!")
+
             else:
                 print("Failed to send stored data.")
-                return  # Stop if there's a failure
-
-        # Clear the file if all data was sent successfully
-        with open(data_file, "w") as f:
-            print("Clearing unsent_data.json")
-            f.write("")  # Overwrite the file with an empty string
+                return False # Stop if there's a failure
+        return True
 
     except Exception as e:
         print("Failed to read or send stored data:", e)
+        return False
 
 # Main function to collect and send data
 def main():
@@ -163,11 +163,17 @@ def main():
 
     # If Wi-Fi is connected, attempt to send both current and stored data
     if wlan.isconnected():
-        send_stored_data()  # Try to send any unsent data from previous attempts
+
+        if send_stored_data():  # Try to send any unsent data from previous attempts
+            # Clear the file if all data was sent successfully
+            with open(data_file, "w") as f:
+                print("Clearing unsent_data.json")
+                f.write("")  # Overwrite the file with an empty string
+
 
         # Try sending the current data
         if send_data_to_server(data):
-            print("Data sent successfully!")
+            print("Current data sent successfully!")
         else:
             print("Failed to send current data. Appending to local storage.")
             append_unsent_data(data)
@@ -192,12 +198,14 @@ def handle_power_on_reset():
     print("Power-on reset")
     print("Power on reset callin main")
 
+    blink.blink_error(5)
+
     main()    
 
 
 def handle_hardware_watchdog_reset():
     print("Hardware watchdog reset")
-    blink.blink_error(5)
+    blink.blink_error(10)
 
 def handle_soft_reset():
     print("Soft reset")
@@ -207,11 +215,23 @@ def handle_soft_reset():
     print('Enter REPL')
     sys.exit()
 
+def handle_hard_reset():
+    print("Hard reset")
+    blink.blink_error(2)
+
+
+    print('Enter REPL')
+    sys.exit()
+    
+# Not available
 def handle_brown_out_reset():
     print("Brown-out reset")
     
 def handle_deep_sleep_reset():
     print("Deep sleep reset calling main")
+
+    blink.blink_error(5)
+
     main()
 
 
@@ -220,6 +240,7 @@ def handle_deep_sleep_reset():
 reset_handlers = {
     RESET_POWER_ON: handle_power_on_reset,
     RESET_HARDWARE_WATCHDOG: handle_hardware_watchdog_reset,
+    RESET_HARD_RESET: handle_hard_reset,
     RESET_SOFT_RESET: handle_soft_reset,
     # RESET_BROWN_OUT: handle_brown_out_reset,
     RESET_DEEP_SLEEP: handle_deep_sleep_reset
@@ -237,10 +258,6 @@ machine.wake_reason()
 reset_handlers.get(reset_cause, lambda: print("Unknown reset cause"))()
 
 #currently should never reach here
-#sampling delay moved to datalog2 deep sleep time
-
-# Should never reach here
-
 # Clear the reset cause
 # machine.wake_reason()
 
