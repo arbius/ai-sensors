@@ -14,7 +14,6 @@ NO_NETWORK = 3
 def blink_error(short_blinks):
        
         # The more verbose way
-    while True:
         led_pin.value(1)
         sleep_ms(1000)
         for i in range (short_blinks):
@@ -25,6 +24,8 @@ def blink_error(short_blinks):
         
         led_pin.value(0)
         sleep_ms(2000)
+
+        return
 
 
 # blink_error(5)
