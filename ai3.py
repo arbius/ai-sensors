@@ -162,7 +162,7 @@ def main():
     year, month, day, hour, minute, second = get_rtc_data()
     dt = get_rtc_data()
 
-    iso_timestamp = "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}Z".format(dt[0], dt[1], dt[2], dt[3], dt[4], dt[5])
+    iso_timestamp = "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(dt[0], dt[1], dt[2], dt[3], dt[4], dt[5])
     
 
     # Get temperature and humidity from DHT22
