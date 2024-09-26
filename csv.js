@@ -10,7 +10,7 @@ fs.readFile('time.json', 'utf8', (err, data) => {
         return;
     }
 
-    // Output the data to 'time.json'
+    // Output the data to 'dth.json'
     fs.writeFile('dth.json', data, (err) => {
         if (err) {
             console.error('Error writing to dth.json:', err);
@@ -54,9 +54,51 @@ fs.readFile('time.json', 'utf8', (err, data) => {
                 });
 
                 console.log('CSV file "dth.csv" created successfully with reordered keys.');
+
+                // Ask the user if they want to delete the input file
+                askToDeleteInputFile();
+                
             } else {
                 console.log('No data to write to the CSV file.');
             }
         });
     });
 });
+
+// Function to ask the user if they want to delete the input file
+function askToDeleteInputFile() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    rl.question('Do you want to delete the input file (time.json)? (yes/no): ', (answer) => {
+        if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
+            deleteInputFile('time.json');
+        } else {
+            console.log('Input file not deleted.');
+        }
+        rl.close();
+    });
+}
+
+// Function to delete the input file
+function deleteInputFile(filePath) {
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error(`Error deleting ${filePath}:`, err);
+        } else {
+            console.log(`Successfully deleted ${filePath}.`);
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
