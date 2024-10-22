@@ -93,10 +93,11 @@ def get_dht22_data():
         return None, None
 
 # Send data to the Node.js server
-def send_data_to_server(data):
+def send_data_to_server(data, data_count):
     try:
         # data = ujson.dumps(data)
-        blink.blink_error(2)
+        if data_count <= 5:
+            blink.blink_error(2)
 
         response = urequests.post(server_url, json=data)
         print("Server response:", response.text)
@@ -122,12 +123,17 @@ def send_stored_data():
         with open(data_file, "r") as f:
             lines = f.readlines()
         
+        data_count = len(lines)  # Count how many lines (items) need to be sent
+
+        
         for line in lines:
             data = ujson.loads(line.strip())
             print ("send_stored_data", data)
 
-            if send_data_to_server(data):
+            if send_data_to_server(data, data_count):
                 print("Stored data sent successfully!")
+                data_count -= 1  # Decrement the count only when the data is successfully sent
+
 
             else:
                 print("Failed to send stored data.")
@@ -194,7 +200,8 @@ def main():
 
 
         # Try sending the current data
-        if send_data_to_server(data):
+        # Second parameter is line count of 1 for single event
+        if send_data_to_server(data, 1):
             print("Current data sent successfully!")
         else:
             print("Failed to send current data. Appending to local storage.")
