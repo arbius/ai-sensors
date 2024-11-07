@@ -4,14 +4,9 @@ from utime import sleep_ms
 ON_BOARD_PIN = 25
 led_pin = Pin(ON_BOARD_PIN, Pin.OUT)
 
-"""
-INVALID_DATE = 4
-NTP_TIMEOUT = 2
-NO_NETWORK = 3
-"""
 
 
-def blink_error(short_blinks):
+def blink_short(short_blinks):
        
         # The more verbose way
         led_pin.value(1)
@@ -28,7 +23,7 @@ def blink_error(short_blinks):
         return
 
 
-# blink_error(5)
+# blink_short(5)
 
 
 

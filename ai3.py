@@ -14,11 +14,12 @@ import os
 ON_BOARD_PIN = 25
 led_pin = Pin(ON_BOARD_PIN, Pin.OUT)
 
-"""
-INVALID_DATE = 4
-NTP_TIMEOUT = 2
-NO_NETWORK = 3
-"""
+SEND_DATA = 2
+SOFT_RESET = 3
+HARD_RESET = 4
+DEEP_SLEEP_RESET = 5
+POWER_ON_RESET = 7
+UNKNOWN_RESET = 10
 
 
 # Define reset cause constants
@@ -47,9 +48,6 @@ def connect_to_wifi(ssid, password):
     
     print("Failed to connect to WiFi.")
     return wlan
-
-# Initialize DHT22 sensor (DHT22 connected to pin 15)
-dht22_sensor = dht.DHT22(Pin(15))
 
 # Get time from DS3231 RTC using getDS3231.do_getDS3231 function
 def get_rtc_data():
@@ -80,6 +78,10 @@ def get_rtc_data():
 
 # Get temperature and humidity from DHT22
 def get_dht22_data():
+
+    # Initialize DHT22 sensor (DHT22 connected to pin 15)
+    dht22_sensor = dht.DHT22(Pin(15))
+
     try:
         dht22_sensor.measure()
         temperature = dht22_sensor.temperature()
@@ -97,7 +99,7 @@ def send_data_to_server(data, data_count):
     try:
         # data = ujson.dumps(data)
         if data_count <= 5:
-            blink.blink_error(2)
+            blink.blink_short(SEND_DATA)
 
         response = urequests.post(server_url, json=data)
         print("Server response:", response.text)
@@ -226,18 +228,18 @@ def main():
 def handle_power_on_reset():
     print("Power on reset calling main")
 
-    blink.blink_error(5)
+    blink.blink_short(POWER_ON_RESET)
 
     main()    
 
 
 def handle_hardware_watchdog_reset():
     print("Hardware watchdog reset")
-    blink.blink_error(10)
+    blink.blink_short(10)
 
 def handle_soft_reset():
     print("Soft reset")
-    blink.blink_error(1)
+    blink.blink_short(SOFT_RESET)
 
 
     print('Enter REPL')
@@ -245,7 +247,7 @@ def handle_soft_reset():
 
 def handle_hard_reset():
     print("Hard reset")
-    blink.blink_error(2)
+    blink.blink_short(HARD_RESET)
 
 
     print('Enter REPL')
@@ -258,7 +260,7 @@ def handle_brown_out_reset():
 def handle_deep_sleep_reset():
     print("Deep sleep reset calling main")
 
-    blink.blink_error(5)
+    blink.blink_short(DEEP_SLEEP_RESET)
 
     main()
 
