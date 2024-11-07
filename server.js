@@ -43,6 +43,11 @@ app.post('/time', (req, res) => {
 app.get('/last-entry', (req, res) => {
     const filePath = path.join(__dirname, 'time.json');  // Path to your JSON file
     
+    // Check if the file exists before proceeding
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'No data exists yet. Please try again later.' });
+    }
+
     // Create a readline interface to read the file line by line
     const readInterface = readline.createInterface({
       input: fs.createReadStream(filePath),
