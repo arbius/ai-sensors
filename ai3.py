@@ -14,6 +14,8 @@ import os
 ON_BOARD_PIN = 25
 led_pin = Pin(ON_BOARD_PIN, Pin.OUT)
 
+
+# Short blinks
 SEND_DATA = 2
 SOFT_RESET = 3
 HARD_RESET = 4
